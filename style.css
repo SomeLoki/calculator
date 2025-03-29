@@ -1,0 +1,36 @@
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  border: 1px solid black;
+}
+
+body {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  max-width: 100dvw;
+  max-height: 100dvh;
+}
+
+.header,
+.footer {
+height: 100px;
+background-color: slategrey;
+}
+
+.contentBody {
+  flex: auto;
+  background-color: seashell;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.container {
+  display: flex;
+  flex: 1 1 auto;
+  height: 800px;
+  max-width: 600px;
+  background-color: navy;
+}
