@@ -2,11 +2,37 @@
   box-sizing: border-box;
   margin: 0;
   padding: 0;
-  border: 1px solid black;
+}
+
+
+body,
+.contentBody,
+.container,
+.buttonContainer,
+.rightOperatorContainer,
+.topFuncContainer,
+.numContainer  {
+display: flex;
+}
+
+.numContainer,
+.rightOperatorContainer,
+.topFuncContainer {
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+  gap: 10px 50px;
+}
+
+.topFuncContainer {
+  justify-content: flex-end;
+}
+
+.clear {
+  margin-right: 25px;
 }
 
 body {
-  display: flex;
   flex-direction: column;
   justify-content: space-between;
   max-width: 100dvw;
@@ -20,7 +46,7 @@ background-color: slategrey;
 }
 
 .contentBody {
-  flex: auto;
+  height: 100dvh;
   background-color: seashell;
   display: flex;
   justify-content: center;
@@ -28,9 +54,57 @@ background-color: slategrey;
 }
 
 .container {
-  display: flex;
+  flex-direction: column;
   flex: 1 1 auto;
   height: 800px;
   max-width: 600px;
   background-color: navy;
+}
+
+.inputContainer {
+  height: 200px;
+  width: 600px;
+  background-color: red;
+}
+
+.buttonContainer {
+  height: 600px;
+  width: 600px;
+  background-color: green;
+  flex-wrap: wrap;
+}
+
+.topFuncContainer {
+  height: 125px;
+  width:  600px;
+  background-color: yellow;
+}
+
+.numContainer {
+  height: 475px;
+  width: 450px;
+  background-color: orange;
+}
+
+.rightOperatorContainer {
+  height: 475px;
+  width: 150px;
+  background-color: purple;
+}
+
+button {
+  width: 100px;
+  height: 100px;
+  border-radius: 25px;
+  border: 3px solid black;
+  font-size: 32px;
+  text-align: center;
+}
+
+.backspace {
+  width: 200px;
+}
+
+button:hover {
+  background-color: orange;
 }
