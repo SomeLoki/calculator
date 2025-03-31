@@ -9,6 +9,7 @@ body,
 .contentBody,
 .container,
 .buttonContainer,
+.inputContainer,
 .rightOperatorContainer,
 .topFuncContainer,
 .numContainer  {
@@ -16,6 +17,7 @@ display: flex;
 }
 
 .numContainer,
+.inputContainer,
 .rightOperatorContainer,
 .topFuncContainer {
   flex-wrap: wrap;
@@ -65,6 +67,8 @@ background-color: slategrey;
   height: 200px;
   width: 600px;
   background-color: red;
+  font-size: 32px;
+  flex-direction: column;
 }
 
 .buttonContainer {
