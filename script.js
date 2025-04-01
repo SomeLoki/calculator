@@ -1,23 +1,19 @@
 const containerNames = ["inputContainer", "buttonContainer", "topFuncContainer", "numContainer", "rightOperatorContainer",]
-
 // buttons are listed out of order so that they align with rows. top: 7, 8, 9 next: 4, 5, 6 next: 1, 2, 3, last: decimal, 0, enter.
-const buttonNames = [ "seven", "eight", "nine", "four", "five", "six", "one", "two", "three", "decimal", "zero", "enter", "plus", "minus", "divide", "multiply", "backspace", "clear"];
-const buttonText = [ "7", "8", "9", "4", "5", "6", "1", "2", "3", ".", "0", "enter", "+", "-", "/", "*", "backspace", "clear",];
-const textFields = [ "displayEquation", "displayTotal",];
+const buttonNames = [ "seven", "eight", "nine", "four", "five", "six", "one", "two", "three", "decimal", "zero", "enter", "multiply", "divide", "subtract", "add", "backspace", "clear"];
+const buttonText = [ "7", "8", "9", "4", "5", "6", "1", "2", "3", ".", "0", "enter", "*", "/", "-", "+", "backspace", "clear",];
+const textFields = [ "displayTotal","displayEquation",];
 
 const displayText = {
     total: "",
-    firstNumber: "test",
-    operator: "*",
+    firstNumber: "",
+    operator: "",
     secondNumber: "",
-    activeNumberField: 2,
+    activeNumberField: 1,
     equation() {
       return `${this.firstNumber} ${this.operator} ${this.secondNumber}`;
     },
 }
-
-
-
 
 const createElement = function( element, className, textContent, appendTo) {
   const elem = document.createElement(element);
@@ -26,16 +22,9 @@ const createElement = function( element, className, textContent, appendTo) {
   elem.classList.add(className);
   elem.textContent = textContent;
   parent.appendChild(elem);
-
 }
 
-const createCalculator = function() {
-createContainers();
-createButtons();
-createTextFields();
-};
-
-function createContainers(){
+const createContainers = function(){
   for (container of containerNames) {
     // inputContainer and buttonContainer are primary containers, the last 3 containers are sub containers of buttonContainer thus the check.
     let parentElement = ( container === "inputContainer" || container === "buttonContainer") ? ".container" : ".buttonContainer" ; 
@@ -43,7 +32,37 @@ function createContainers(){
   };
 };
 
-function createButtons() { 
+const attachEventListener = function(elementSelector, index, typeOfItem) {
+  const element = document.querySelector(`.${elementSelector}`);
+
+  switch (typeOfItem) {
+    case "num":
+      // 0-8 is num 1-9, 10 is 0.
+      if (index < 9 || index === 10) {
+        createNumListener(element);
+        // 11 is enter
+      } else if (index === 11) {
+        createEnterListener(element);
+              // 9 is decimal
+          } else if (index === 9) {
+            createDecimalListener(element);
+          };
+      break;
+    case "operator":
+      // all operators do the same thing
+      createOperatorListener(element);
+      break;
+    case "remove":
+      if (index === 16) {
+        createBackspaceListener(element);
+      } else {
+        createClearListener(element);
+      }
+      break;
+  }
+}
+
+const createButtons = function() { 
   let parentElement = "";
   let listenerSort = "";
   for (let i = 0; i < (buttonNames.length); i++) {
@@ -58,28 +77,95 @@ function createButtons() {
     } else {
       // everything else goes in the top box, should be backspace and clear commands
       parentElement = ".topFuncContainer";
-      listenerSort = "delete";
+      listenerSort = "remove"
     };
     const className = buttonNames[i];
     const text = buttonText[i];
     createElement( "button", className, text, parentElement);
+    attachEventListener(className, i, listenerSort);
   };
 };
 
-function createTextFields() {
+const createTextFields = function() {
   for (field of textFields) {
-    createElement("div", field, "so I can visually see", ".inputContainer");
+    createElement("div", field, "", ".inputContainer");
   };
 };
 
-createCalculator();
+const createCalculator = function() {
+createContainers();
+createButtons();
+createTextFields();
+};
 
-// need multiple types of event listeners:
-// number buttons => add their textcontent to either firstNumber or secondNumber. will also need to call equation() ( num , text) decimal will be the same, decimal will need to call a check function 
-// operator buttons => add their textcontent to displayText.operator , toggle variable to point to secondNumber for text
-// enter button => use operator to determine which function to call for math and update total
-// backspace => remove 1 char from active string, if that string is string2 and at 0 then it will need to remove the operator and set active string to 1.
-// clear => set total, firstnum, operator, secondnum to "" and set active string to 1.
+
+function createNumListener(elementSelector) {
+  elementSelector.addEventListener("click", function() {
+    // resets display if a calculation was already ran
+    if (displayText.total !== "") {
+      clear();
+    };
+    const textIndex = buttonNames.indexOf(this.className);
+    const activeNumField = (displayText.activeNumberField === 1) ? "firstNumber" : "secondNumber";
+    displayText[activeNumField] += buttonText[textIndex];
+    updateDisplay();
+  });
+};
+
+function createEnterListener(elementSelector) {
+  elementSelector.addEventListener("click", function () {
+    if (isDivisionByZero() || isAnyFieldEmpty()) {
+      return;
+    }
+    enter();
+  });
+}
+
+function isDivisionByZero() {
+  if (displayText.operator === "/") {
+    return ( displayText.firstNumber === "0" || displayText.secondNumber === "0" );
+  }
+  // if the operator isn't division then this is false
+  return false;
+};
+
+function isAnyFieldEmpty() {
+  return (!displayText.firstNumber || !displayText.operator || !displayText.secondNumber)
+};
+
+function createDecimalListener(elementSelector) {
+  elementSelector.addEventListener("click", () => {
+    const activeNumField = (displayText.activeNumberField === 1) ? "firstNumber" : "secondNumber";
+    if (displayText[activeNumField].includes(".")) {
+      return;
+    }
+    displayText[activeNumField] += ".";
+    updateDisplay();
+  });
+};
+
+function createOperatorListener(elementSelector) {
+  elementSelector.addEventListener("click", function() {
+    // handles shifting total to first number if an operator entered while total is full.
+    if (displayText.total !== "") {
+      const tempStr = displayText.total;
+      clear();
+      displayText.firstNumber = tempStr;
+    };
+    const textIndex = buttonNames.indexOf(this.className);
+    displayText.operator = buttonText[textIndex];
+    updateDisplay();
+    setActiveNumberField();
+  });
+};
+
+function createBackspaceListener(elementSelector) {
+  elementSelector.addEventListener("click", backspace);
+};
+
+function createClearListener(elementSelector) {
+  elementSelector.addEventListener("click", clear);
+};
 
 function setActiveNumberField() {
   // if an operator is entered switch to entering the second number
@@ -108,6 +194,8 @@ function backspace() {
   }
   const allButLastChar = displayText[modify].length -1;
   displayText[modify] = displayText[modify].slice(0, allButLastChar);
+  // if a calculation has just been run, remove the total and let you edit the 2nd number
+  if (displayText.total !== "") displayText.total = "";
   updateDisplay()
 }
 
@@ -129,7 +217,7 @@ function updateDisplay() {
 
 function enter() {
   let num1, num2;
-  if (isEitherAFloat === true) {
+  if (isEitherAFloat) {
     num1 = parseFloat(displayText.firstNumber);
     num2 = parseFloat(displayText.secondNumber);
   } else {
@@ -172,3 +260,5 @@ function divide(num1, num2) {
 function isEitherAFloat () {
   return ( displayText.firstNumber.includes(".") || displayText.secondNumber.includes("."))
 }
+
+createCalculator();
