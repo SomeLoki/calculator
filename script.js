@@ -1,7 +1,7 @@
 const containerNames = ["inputContainer", "buttonContainer", "topFuncContainer", "numContainer", "rightOperatorContainer",]
 // buttons are listed out of order so that they align with rows. top: 7, 8, 9 next: 4, 5, 6 next: 1, 2, 3, last: decimal, 0, enter.
-const buttonNames = [ "seven", "eight", "nine", "four", "five", "six", "one", "two", "three", "decimal", "zero", "enter", "multiply", "divide", "subtract", "add", "backspace", "clear"];
-const buttonText = [ "7", "8", "9", "4", "5", "6", "1", "2", "3", ".", "0", "enter", "*", "/", "-", "+", "backspace", "clear",];
+const buttonNames = [ "seven", "eight", "nine", "four", "five", "six", "one", "two", "three", "decimal", "zero", "equals", "multiply", "divide", "subtract", "add", "backspace", "clear"];
+const buttonText = [ "7", "8", "9", "4", "5", "6", "1", "2", "3", ".", "0", "=", "*", "/", "-", "+", "backspace", "clear",];
 const textFields = [ "displayTotal","displayEquation",];
 
 const displayText = {
@@ -40,9 +40,9 @@ const attachEventListener = function(elementSelector, index, typeOfItem) {
       // 0-8 is num 1-9, 10 is 0.
       if (index < 9 || index === 10) {
         createNumListener(element);
-        // 11 is enter
+        // 11 is equals
       } else if (index === 11) {
-        createEnterListener(element);
+        createEqualListener(element);
               // 9 is decimal
           } else if (index === 9) {
             createDecimalListener(element);
@@ -60,6 +60,7 @@ const attachEventListener = function(elementSelector, index, typeOfItem) {
       }
       break;
   }
+
 }
 
 const createButtons = function() { 
@@ -112,18 +113,33 @@ function createNumListener(elementSelector) {
   });
 };
 
-function createEnterListener(elementSelector) {
+function createEqualListener(elementSelector) {
   elementSelector.addEventListener("click", function () {
-    if (isDivisionByZero() || isAnyFieldEmpty()) {
+    // actually has to be in this order or an empty num1 or num2 is also recognized as division by 0.
+    if (isAnyFieldEmpty() || isDivisionByZero()) {
       return;
     }
-    enter();
+    equal();
   });
 }
 
 function isDivisionByZero() {
+  // join into array, then filter array for characters that aren't 0 or . if the array has a length greater than 0, than the number isn't just 0.
+  const firstNumArray = displayText.firstNumber
+    .split("")
+    .filter( (e) => {
+      return (e !== "0" && e!== ".")
+    });
+    const secondNumArray = displayText.secondNumber
+    .split("")
+    .filter( (e) => {
+      return (e !== "0" && e !== ".")
+    });
   if (displayText.operator === "/") {
-    return ( displayText.firstNumber === "0" || displayText.secondNumber === "0" );
+    if ( firstNumArray.length === 0 || secondNumArray.length === 0) {
+      alert("No blackholes today.");
+      return true;
+    } 
   }
   // if the operator isn't division then this is false
   return false;
@@ -215,7 +231,7 @@ function updateDisplay() {
   total.textContent = displayText.total;
 }
 
-function enter() {
+function equal() {
   let num1, num2;
   if (isEitherAFloat) {
     num1 = parseFloat(displayText.firstNumber);
@@ -241,20 +257,21 @@ function enter() {
   updateDisplay();
 }
 
+// only allows up to 5 decimal places.
 function add(num1, num2) {
-  displayText.total = num1 + num2;
+  displayText.total = (Math.round((num1 + num2) * 100000) /100000)
 }
 
 function subtract(num1, num2) {
-  displayText.total = num1 - num2;
+  displayText.total = (Math.round((num1 - num2) * 100000) /100000)
 }
 
 function multiply(num1, num2) {
-  displayText.total = num1 * num2;
+  displayText.total = (Math.round((num1 * num2) * 100000) /100000)
 }
 
 function divide(num1, num2) {
-  displayText.total = num1 / num2;
+  displayText.total = (Math.round((num1 / num2) * 100000) /100000);
 }
 
 function isEitherAFloat () {
