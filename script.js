@@ -125,7 +125,9 @@ function createEqualListener(elementSelector) {
 
 function isDivisionByZero() {
   // join into array, then filter array for characters that aren't 0 or . if the array has a length greater than 0, than the number isn't just 0.
-  const firstNumArray = displayText.firstNumber
+
+  if (displayText.operator === "/") {
+    const firstNumArray = displayText.firstNumber
     .split("")
     .filter( (e) => {
       return (e !== "0" && e!== ".")
@@ -135,13 +137,11 @@ function isDivisionByZero() {
     .filter( (e) => {
       return (e !== "0" && e !== ".")
     });
-  if (displayText.operator === "/") {
     if ( firstNumArray.length === 0 || secondNumArray.length === 0) {
       alert("No blackholes today.");
       return true;
     } 
   }
-  // if the operator isn't division then this is false
   return false;
 };
 
@@ -164,7 +164,7 @@ function createOperatorListener(elementSelector) {
   elementSelector.addEventListener("click", function() {
     // handles shifting total to first number if an operator entered while total is full.
     if (displayText.total !== "") {
-      const tempStr = displayText.total;
+      const tempStr = `${displayText.total}`;
       clear();
       displayText.firstNumber = tempStr;
     };
