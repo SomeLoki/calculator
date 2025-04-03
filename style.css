@@ -24,6 +24,7 @@ display: flex;
   justify-content: center;
   align-items: center;
   gap: 10px 50px;
+  background-color: slategrey;
 }
 
 .topFuncContainer {
@@ -58,51 +59,58 @@ background-color: slategrey;
 .container {
   flex-direction: column;
   flex: 1 1 auto;
-  height: 800px;
-  max-width: 600px;
-  background-color: navy;
+  height: 825px;
+  max-width: 635px;
+  background-color: slategrey;
+  border: 5px outset black;
+  border-radius: 10px;
 }
 
 .inputContainer {
-  height: 200px;
-  width: 600px;
-  background-color: red;
+  height: 150px;
+  width: 574px;
+  margin: 25px;
   font-size: 32px;
   flex-direction: column;
+  background-color: black;
+  border-radius: 10px;
+  border: 2px solid slategray;
+}
+
+.inputContainer > div {
+  color: white;
 }
 
 .buttonContainer {
   height: 600px;
   width: 600px;
-  background-color: green;
   flex-wrap: wrap;
+  margin-left: 20px;
 }
 
 .topFuncContainer {
   height: 125px;
   width:  600px;
-  background-color: yellow;
 }
 
 .numContainer {
   height: 475px;
   width: 450px;
-  background-color: orange;
 }
 
 .rightOperatorContainer {
   height: 475px;
   width: 150px;
-  background-color: purple;
 }
 
 button {
   width: 100px;
   height: 100px;
   border-radius: 25px;
-  border: 3px solid black;
+  border: 3px outset black;
   font-size: 32px;
   text-align: center;
+  border-style: outset;
 }
 
 .backspace {
@@ -111,4 +119,5 @@ button {
 
 button:hover {
   background-color: orange;
+  border: inset black;
 }
